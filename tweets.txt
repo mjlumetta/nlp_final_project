@@ -1,0 +1,22 @@
+t the most frequent sentiment among all chunks was 'neutral'. 
+This is not terribly surprising since we expect each chunk to be fairly 
+representative of the whole, and for the greater dataset the most common 
+sentiment by far was neutral (with conflation on).
+
+6. Tagging the test data based on the MFS of the training data yields about 
+a 48.2% accuracy. This makes a lot of sense since each individual chunk had
+very similar proportions of 'neutral', around 48%. Each chunk was very similar
+in its components, which made the numbers work out quite nicely. A larger
+k ensures that the chunks are more like to be different from one another, 
+which can cause the per-experiment accuracy to vary more.
+
+7. Our decision list significant outperforms the MFS baseline, ending with
+an accuracy of around 74.3%. Processing stopwords increases the accuracy 
+slightly to around 74.6%, while case-folding decreases the accuracy 
+significantly, to about 68.7%. 
+
+8. Negation processing was helpful, bringing the accuracy to about
+74.5% (slightly better than the default decision list).
+
+9. The naive Bayes classifier achieves an accuracy between 29.6% and 31.4%, far
+less than the performance of both the decision list and the MFS baseline.
