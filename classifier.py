@@ -26,6 +26,7 @@ from parseTweet import *
 from crossval import *
 from helpers import *
 from scorer import *
+from MegaClassifier import *
 
 def main():
     try:
@@ -35,24 +36,31 @@ def main():
         flag = False
 
     trainData = parse_tweets(sys.argv[1], 'B')
+    mega = MegaClassifier()
     if flag:
         chunks = k_chunks(trainData, k)
         i = int(input("Pick a test segment from 0 to k-1: "))
         if i not in range(k):
             return -1
         else:
-            crossvalTest(chunks, i)
+            crossvalTest(chunks)
     else:
         testVsTrain(trainData, sys.argv[2])
 
-def crossvalTest(chunks, i):
-    testData = chunks[i]
-    trainSet = [chunks[j] for j in range(len(chunks)) if j != i]
-    trainData = combine_chunks(trainSet)
-    stats = test(trainData, testData)
-    newScore = scorer(stats)
+def crossvalTest(chunks):
+    scores = []
+    for i in range(len(chunks)):
+        testData = chunks[i]
+        trainSet = [chunks[j] for j in range(len(chunks)) if j != i]
+        trainData = combine_chunks(trainSet)
+        stats = test(trainData, testData)
+        newScore = scorer(stats)
+        scores.append(newScore)
 
-    print("The new version got an official score of", newScore)
+    print("In cross-validation, the chunks achieved the following scores")
+    for i in range(len(scores)):
+        print("Chunk", i, ":", scores[i])
+    print("Average score:", sum(scores)/len(scores))
 
 
 
