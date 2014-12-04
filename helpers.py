@@ -12,7 +12,6 @@ This function takes an input dict and applies negation processing to it
 """
 def get_negated_dict(tweetData):
     negated_tweets = {}
-    #Just making sure we don't change the original tweetData
     negated_tweets = deepcopy(tweetData)
     key_list = negated_tweets['tweets'].keys()
     for key in key_list:

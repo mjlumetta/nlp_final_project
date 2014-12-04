@@ -50,18 +50,6 @@ def get_feature_counts(tweetData, keyword, stopwords=False, caseFolding=False):
                     counts[sentiment][feature] += 1
     return counts
 
-def negation_processing(wordList):
-    negate = False
-    punctuation = [',', '.', '?', '!', ':', ';']
-    for i in range(len(wordList)):
-        if wordList[i].lower() == "not":
-            negate = True
-        elif wordList[i] in punctuation:
-            negate = False
-        elif negate:
-            wordList[i] = "NOT_" + wordList[i]
-    return wordList
-
 def get_bag_of_words(instanceData, stopwordList=[], caseFolding=False):
     words = instanceData['words']
     if len(stopwordList) > 0:
