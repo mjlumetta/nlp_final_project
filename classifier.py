@@ -21,12 +21,10 @@ in isolation don't make much of a difference.
 #!/usr/bin/python3
 
 import declist
-import declist2
 import sys
 from parseTweet import *
 from crossval import *
-from tweets import get_negated_dict
-from warmup import *
+from helpers import *
 from scorer import *
 
 def main():
@@ -52,10 +50,8 @@ def crossvalTest(chunks, i):
     trainSet = [chunks[j] for j in range(len(chunks)) if j != i]
     trainData = combine_chunks(trainSet)
     stats = test(trainData, testData)
-    oldScore = scorer(stats[0])
-    newScore = scorer(stats[1])
+    newScore = scorer(stats)
 
-    print("The old version got an official score of", oldScore)
     print("The new version got an official score of", newScore)
 
 
@@ -70,44 +66,19 @@ def combine_chunks(chunks):
 def testVsTrain(trainData, filename):
     testData = parse_tweets(filename, 'B')
     stats = test(trainData, testData)
-    oldScore = scorer(stats[0])
-    newScore = scorer(stats[1])
+    newScore = scorer(stats)
 
-    print("The old version got an official score of", oldScore)
     print("The new version got an official score of", newScore)
 
 
 def test(trainData, testData):
-    # old version
-    old = declist2.build_decision_list(trainData, 'tweets', False, True)
     correct = 0
     total = 0
     mfs = MFS_counter(trainData, True)
-    oldStats = {}
-    for instance in testData['tweets']:
-        result = declist2.classify(testData['tweets'][instance], old, mfs)
-        answers = testData['tweets'][instance]['answers']
-        if result in testData['tweets'][instance]['answers']:
-            correct += 1
-        total += 1
-        # official score
-        if result in oldStats:
-            if answers[0] in oldStats[result]:
-                oldStats[result][answers[0]] += 1
-            else:
-                oldStats[result][answers[0]] = 1
-        else:
-            oldStats[result] = {}
-            oldStats[result][answers[0]] = 1
-    accuracy = correct / total
-    print("The old version achieved an accuracy of", accuracy)
 
-    # new version
-    #trainData = get_negated_dict(trainData)
-    #testData = get_negated_dict(testData)
+    trainData = get_negated_dict(trainData)
+    testData = get_negated_dict(testData)
     new = declist.build_decision_list(trainData, 'tweets', False, True)
-    print(new[:30])
-    print(new[len(new) - 30 : ])
     newStats = {}
     for instance in testData['tweets']:
         result = declist.classify(testData['tweets'][instance], new, mfs)
@@ -125,11 +96,9 @@ def test(trainData, testData):
             newStats[result] = {}
             newStats[result][answers[0]] = 1
     accuracy = correct / total
-    print("The new version achieved an accuracy of", accuracy)
 
     newStats = postprocess_stats(newStats)
-    oldStats = postprocess_stats(oldStats)
-    return (oldStats, newStats)
+    return newStats
 
 def postprocess_stats(stats):
     guesses = []
