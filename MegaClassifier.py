@@ -9,6 +9,7 @@ class MegaClassifier:
     negate = True
     stopwords = False
     decisionList = []
+    mfs = ""
 
     def __init__(self):
         self.trainData = {}
@@ -19,6 +20,7 @@ class MegaClassifier:
             self.trainData = get_negated_dict(newData)
         else:
             self.trainData = newData
+        self.mfs = MFS_Counter(self.trainData)
 
     def setTestData(self, newData):
         if self.negate:
@@ -44,3 +46,9 @@ class MegaClassifier:
 
     def setNegate(new):
         self.negate = new
+
+    def classifyInstance(self, instance):
+        # TODO: add more than just the decision list classification
+        return classify(instance, self.decisionList, self.mfs)
+
+        
