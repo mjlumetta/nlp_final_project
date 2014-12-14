@@ -39,21 +39,25 @@ def main():
     mega = MegaClassifier()
     if flag:
         chunks = k_chunks(trainData, k)
-        i = int(input("Pick a test segment from 0 to k-1: "))
-        if i not in range(k):
-            return -1
-        else:
-            crossvalTest(chunks)
+        crossvalTest(chunks, mega)
     else:
-        testVsTrain(trainData, sys.argv[2])
+        testVsTrain(trainData, sys.argv[2], mega)
 
-def crossvalTest(chunks):
+def debugNBC(chunks, classifier):
+    testData = chunks[0]
+    trainData = combine_chunks(chunks[1:])
+    classifier.setTrainData(trainData)
+    classifier.setTestData(testData)
+    classifier.buildNaiveBayesClassifier()
+    classifier.debugNBC()
+
+def crossvalTest(chunks, classifier):
     scores = []
     for i in range(len(chunks)):
         testData = chunks[i]
         trainSet = [chunks[j] for j in range(len(chunks)) if j != i]
         trainData = combine_chunks(trainSet)
-        stats = test(trainData, testData)
+        stats = test(trainData, testData, classifier)
         newScore = scorer(stats)
         scores.append(newScore)
 
@@ -71,29 +75,32 @@ def combine_chunks(chunks):
         combined['tweets'].update(chunks[i]['tweets'])
     return combined
 
-def testVsTrain(trainData, filename):
+def testVsTrain(trainData, filename, classifier):
     testData = parse_tweets(filename, 'B')
-    stats = test(trainData, testData)
+    stats = test(trainData, testData, classifier)
     newScore = scorer(stats)
 
     print("The new version got an official score of", newScore)
 
 
-def test(trainData, testData):
-    correct = 0
-    total = 0
+def test(trainData, testData, classifier):
     mfs = MFS_counter(trainData, True)
 
-    trainData = get_negated_dict(trainData)
-    testData = get_negated_dict(testData)
-    new = declist.build_decision_list(trainData, 'tweets', False, True)
+    classifier.setTrainData(trainData)
+    classifier.setTestData(testData)
+    classifier.buildDecisionList()
+    classifier.buildNaiveBayesClassifier()
+
     newStats = {}
     for instance in testData['tweets']:
-        result = declist.classify(testData['tweets'][instance], new, mfs)
+        result = classifier.classifyInstanceByDecisionList(testData['tweets'][instance])
         answers = testData['tweets'][instance]['answers']
+        # print ("Expected", result, "actual", answers[0])
+        """
         if result in answers:
             correct += 1
         total += 1
+        """
         # official score
         if result in newStats:
             if answers[0] in newStats[result]:
@@ -103,7 +110,6 @@ def test(trainData, testData):
         else:
             newStats[result] = {}
             newStats[result][answers[0]] = 1
-    accuracy = correct / total
 
     newStats = postprocess_stats(newStats)
     return newStats

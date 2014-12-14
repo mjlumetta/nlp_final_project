@@ -34,12 +34,7 @@ def get_feature_counts(tweetData, keyword, stopwords=False, caseFolding=False):
         stopwordList = []
     for instance in data.keys():
         answers = data[instance]['answers']
-        features = get_bag_of_words(data[instance], stopwordList, caseFolding)
-        for k in range(2,4):
-            ngrams = get_ngrams(data[instance], k, caseFolding)
-            features = features + ngrams 
-        skipgrams = get_skipgrams(ngrams, 3, caseFolding)
-        features += skipgrams
+        features = get_features(data[instance], range(2,4), caseFolding, stopwordList, 3)
         for sentiment in answers:
             if sentiment not in counts:
                 counts[sentiment] = {}
@@ -49,6 +44,15 @@ def get_feature_counts(tweetData, keyword, stopwords=False, caseFolding=False):
                 else:
                     counts[sentiment][feature] += 1
     return counts
+
+def get_features(instanceData, ngramRange, caseFolding, stopwordList, nSkipgram):
+    features = get_bag_of_words(instanceData, stopwordList, caseFolding)
+    ngrams = {}
+    for k in ngramRange:
+        ngrams[k] = get_ngrams(instanceData, k, caseFolding)
+        features += ngrams[k]
+    features += get_skipgrams(ngrams[nSkipgram], nSkipgram, caseFolding)
+    return features
 
 def get_bag_of_words(instanceData, stopwordList=[], caseFolding=False):
     words = instanceData['words']
@@ -111,7 +115,7 @@ def get_feature_scores(counts):
     return scores
 
 def classify(instance, decision_list, MFS):
-    features = instance['words']    # bag of words
+    features = get_features(instance, range(2,4), True, [], 3)  
     for entry in decision_list:
         if entry[1] in features:
             return entry[0]

@@ -1,0 +1,44 @@
+Algorithm 1
+A decision list improved by case folding and negation processing. No stopwords. 
+Features: bag of words.
+Chunk 0 : 48.80581516095535
+Chunk 1 : 44.69616989148239
+Chunk 2 : 47.18982535355523
+Chunk 3 : 44.86314117263886
+Chunk 4 : 44.54173452263841
+Average score: 46.019337220254044
+
+Algorithm 2
+Naive bayes classifier with case folding and negation processing, no stopwords.
+Features: bag of words, bigrams, trigrams, and 3-skipgrams.
+Chunk 0 : 34.81652289495068
+Chunk 1 : 35.838711116398024
+Chunk 2 : 36.46889753453401
+Chunk 3 : 33.76273718028721
+Chunk 4 : 32.49182679933629
+Average score: 34.67573910510124
+
+Algorithm 1
+A decision list improved by case folding and negation processing. No stopwords. 
+Features: bag of words, bigrams, trigrams, and 3-skipgrams.
+Chunk 0 : 42.23230814198954
+Chunk 1 : 38.889775204928924
+Chunk 2 : 39.38026405645345
+Chunk 3 : 42.50515634023594
+Chunk 4 : 41.112351000817576
+Average score: 40.82397094888508
+
+Algorithm 4
+A combination of algorithms 2 and 3. The features are the same. 
+To calculate a final answer, the decision list and naive bayes classifier vote. 
+If they agree, that answer is chosen. 
+If one classifier chooses positive/negative and the other chooses objective/neutral, 
+positive/negative answer is chosen.
+If one classifier chooses positive and the other chooses negative, the decision list
+wins. (See above results.)
+Chunk 0 : 45.06415590023787
+Chunk 1 : 43.99844850992307
+Chunk 2 : 44.10632032016915
+Chunk 3 : 43.9641602044669
+Chunk 4 : 46.20767853077984
+Average score: 44.668152693115374

@@ -3,8 +3,9 @@ Code for naive Bayes classifier.
 
 Mike Lumetta, Chris Miller
 """
-from declist import get_feature_counts
+from declist import get_feature_counts, get_features 
 from operator import itemgetter
+from math import log
 
 def build_classifier(trainData, stopwords=False, caseFolding=False):
     sentiments = get_sentiment_probabilities(trainData)
@@ -36,6 +37,8 @@ def smooth_counts(counts, alpha):
                 counts[sen][f] = 0.1
             else:
                 counts[sen][f] += 0.1
+        # Add a minimum count for each sentiment for unseen features in test data
+        counts[sen]['UNKNOWN'] = 0.1
     return counts
 
 def get_all_features(feature_counts):
@@ -56,15 +59,18 @@ def get_feature_probs(feature_counts):
             probs[sen][key] = feature_counts[sen][key] / float(total)
     return probs
 
-def classifyNBC(instance, classifier):
+def classifyNBC(instance, classifier, caseFolding=True, stopwordList=[]):
     scores = {}
     sentiment_probs = classifier[0]
     feature_probs = classifier[1]
-    score = 1
+    features = get_features(instance, range(2,4), caseFolding, stopwordList, 3)
     for sen in sentiment_probs:
-        score *= sentiment_probs[sen]
-        for f in feature_probs[sen]:
-            score *= feature_probs[sen][f]
-        scores[sen] = score
+        logScore = log(sentiment_probs[sen])
+        for f in features:
+            if f in feature_probs[sen]:
+                logScore += log(feature_probs[sen][f])
+            else:
+                logScore += log(feature_probs[sen]['UNKNOWN'])
+        scores[sen] = logScore
     ordered_scores = sorted(scores.items(), key=itemgetter(1), reverse=True)
     return ordered_scores[0][0]
