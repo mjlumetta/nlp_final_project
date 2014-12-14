@@ -93,7 +93,7 @@ def test(trainData, testData, classifier):
 
     newStats = {}
     for instance in testData['tweets']:
-        result = classifier.classifyInstanceByDecisionList(testData['tweets'][instance])
+        result = classifier.classifyInstanceByDecisionListLessK(testData['tweets'][instance], 2)
         answers = testData['tweets'][instance]['answers']
         # print ("Expected", result, "actual", answers[0])
         """

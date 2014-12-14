@@ -71,7 +71,49 @@ class MegaClassifier:
         return classifyNBC(instance, self.naiveBayesClassifier)
 
     def classifyInstanceByDecisionListK(self, instance, k):
-        return classify(instance, self.decisionList, self.mfs)
+        features = get_features(instance, range(2,4), self.casefold, [], 3)
+        return self.classifyInstanceByDecisionListKHelper(instance, k, features)
+
+    def classifyInstanceByDecisionListLess(self, instance):
+        features = get_bag_of_words(instance, [], self.casefold)
+        for entry in decision_list:
+            if entry[1] in features:
+                return entry[0]
+        return MFS
+
+    def classifyInstanceByDecisionListLessK(self, instance, k):
+        features = get_bag_of_words(instance, [], self.casefold)
+        return self.classifyInstanceByDecisionListKHelper(instance, k, features)
+
+    def classifyInstanceByDecisionListKHelper(self, instance, k, features):
+        if k > len(features):
+            k = len(features)
+        sigFeatures = []
+        for entry in self.decisionList:
+            if entry[1] in features:
+                sigFeatures.append(entry)
+                if len(sigFeatures) == k:
+                    break
+        counts = {}
+        for entry in sigFeatures:
+            if entry[0] not in counts:
+                counts[entry[0]] = 1
+            else:
+                counts[entry[0]] += 1
+        maxCount = 0
+        maxSense = []
+        for sense in counts:
+            if counts[sense] >= maxCount:
+                maxCount = counts[sense]
+                maxSense.append(sense)
+        if len(maxSense) == 1:
+            return maxSense[0]
+        else:
+            for entry in sigFeatures:
+                if entry[0] in maxSense:
+                    return entry[0]
+        return self.mfs
+
 
     def debugNBC(self):
         print("Sentiment probabilities")

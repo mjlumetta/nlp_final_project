@@ -18,7 +18,7 @@ Chunk 3 : 33.76273718028721
 Chunk 4 : 32.49182679933629
 Average score: 34.67573910510124
 
-Algorithm 1
+Algorithm 3
 A decision list improved by case folding and negation processing. No stopwords. 
 Features: bag of words, bigrams, trigrams, and 3-skipgrams.
 Chunk 0 : 42.23230814198954
@@ -42,3 +42,40 @@ Chunk 2 : 44.10632032016915
 Chunk 3 : 43.9641602044669
 Chunk 4 : 46.20767853077984
 Average score: 44.668152693115374
+
+Algorithm 5
+An extended decision list algorithm using the k most significant features as
+opposed to just the most significant.
+Features: bag of words, bigrams, trigrams, and 3-skipgrams.
+k = 2
+Chunk 0 : 44.20845526107807
+Chunk 1 : 40.794369029663144
+Chunk 2 : 39.592770162950764
+Chunk 3 : 42.83606859671769
+Chunk 4 : 43.52355922658157
+Average score: 42.191044455398255374
+k = 3
+Chunk 0 : 42.48777780281044
+Chunk 1 : 41.464174454828665
+Chunk 2 : 39.85619980658454
+Chunk 3 : 42.73142382731424
+Chunk 4 : 41.813312208830794
+Average score: 41.67057762007373
+k = 4
+Chunk 0 : 38.304946189436784
+Chunk 1 : 34.91786958685913
+Chunk 2 : 37.095118749254084
+Chunk 3 : 38.75197768898662
+Chunk 4 : 38.64014891740962
+Average score: 37.54201222638925
+As k increases, this algorithm actually performs worse.
+
+Algorithm 6 
+Same as algorithm 5 but uses bag of words as features.
+k = 2
+Chunk 0 : 38.304946189436784
+Chunk 1 : 34.91786958685913
+Chunk 2 : 37.095118749254084
+Chunk 3 : 38.75197768898662
+Chunk 4 : 38.64014891740962
+Average score: 37.54201222638925
