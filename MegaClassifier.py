@@ -18,7 +18,7 @@ class MegaClassifier:
         self.testData = {}
         self.decisionList = []
         self.naiveBayesClassifier = ()
-        self.SVM = svm.LinearSVC()
+        self.CountSVM = svm.LinearSVC()
         self.classes = []
 
     def getClasses(self):
@@ -135,7 +135,7 @@ class MegaClassifier:
         positive = self.naiveBayesClassifier[1]['positive']
         print(list(positive.items())[:50])
 
-    def buildCountSVM(self):
+    def buildCountSVMByHand(self):
         featureMap = self.getFeatureMap()
         print(len(featureMap))
         instanceVectors = []
@@ -147,9 +147,36 @@ class MegaClassifier:
             for i in range(len(self.classes)):
                 if instance['answers'][0] == self.classes[i]:
                     answerIndex = i
-                    print("Answer index is", i)
+                    # print("Answer index is", i)
             classifications.append(answerIndex)
-        self.SVM.fit(numpy.array(instanceVectors), numpy.array(classifications))
+        self.CountSVM.fit(numpy.array(instanceVectors), numpy.array(classifications))
+
+    def buildCountSVM(self):
+        documents = self.getDocuments()
+        cVectorizer = sklearn.feature_extraction.text.CountVectorizer()
+        featureVectors = cVectorizer.fit_transform(documents)
+        classifications = self.getClassifications()
+        self.CountSVM.fit(featureVectors, classifications)
+
+
+    def getDocuments(self):
+        documents = []
+        for k in self.trainData['tweets']:
+            tweet = self.trainData['tweets'][k]
+            documents.append(' '.join(tweet['words']))
+        return documents
+
+    def getClassifications(self):
+        classifications = []
+        for k in self.trainData['tweets']:
+            tweet = self.trainData['tweets'][k]
+            answerIndex = -1
+            for i in range(len(self.classes)):
+                if tweet['answers'][0] == self.classes[i]:
+                    answerIndex = i
+                    # print("Answer index is", i)
+            classifications.append(answerIndex)
+        return numpy.array(classifications)
 
     """
     getFeatureMap
