@@ -79,3 +79,17 @@ Chunk 2 : 37.095118749254084
 Chunk 3 : 38.75197768898662
 Chunk 4 : 38.64014891740962
 Average score: 37.54201222638925
+
+Algorithm 7
+An SVM approach using LinearSVC from scikit-learn. 
+For feature vectors, uses count vectors for bag of words (implemented by CountVectorizer).
+Chunk 0 : 57.19184857877728
+Chunk 1 : 51.80890948676947
+Chunk 2 : 54.43067570727145
+Chunk 3 : 53.99275473238431
+Chunk 4 : 54.27702625895192
+Average score: 54.340242952830884
+
+Algorithm 8
+An SVM approach using LinearSVC from scikit-learn. 
+For feature vectors, uses occurrence vectors for bag of words.
