@@ -148,7 +148,7 @@ class MegaClassifier:
                 if instance['answers'][0] == self.classes[i]:
                     answerIndex = i
             classifications.append(answerIndex)
-        # self.SVM.fit(numpy.array(instanceVectors), numpy.array(classifications))
+        self.SVM.fit(numpy.array(instanceVectors), numpy.array(classifications))
 
     """
     getFeatureMap
@@ -158,7 +158,7 @@ class MegaClassifier:
     def getFeatureMap(self):
         features = set()
         for instance in self.trainData['tweets']:
-            instanceFeatures = set(get_features(self.trainData['tweets'][instance]))
+            instanceFeatures = set(get_bag_of_words(self.trainData['tweets'][instance]))
             features.update(instanceFeatures)
         order = sorted(list(features))
         featureMap = {}
@@ -170,7 +170,7 @@ class MegaClassifier:
         vector = []
         for i in range(len(featureMap)):
             vector.append(0)
-        features = get_features(instance)
+        features = get_bag_of_words(instance)
         for f in features:
             if f in featureMap:
                 vector[featureMap[f]] += 1
@@ -180,7 +180,7 @@ class MegaClassifier:
         vector = []
         for i in range(len(featureMap)):
             vector.append(0)
-        features = get_features(instance)
+        features = get_bag_of_words(instance)
         for f in features:
             if f in featureMap:
                 vector[featureMap[f]] = 1
