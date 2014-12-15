@@ -90,6 +90,7 @@ def test(trainData, testData, classifier):
     classifier.setTestData(testData)
     classifier.buildDecisionList()
     classifier.buildNaiveBayesClassifier()
+    classifier.buildCountSVM()
 
     newStats = {}
     for instance in testData['tweets']:

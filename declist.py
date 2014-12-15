@@ -45,7 +45,7 @@ def get_feature_counts(tweetData, keyword, stopwords=False, caseFolding=False):
                     counts[sentiment][feature] += 1
     return counts
 
-def get_features(instanceData, ngramRange, caseFolding, stopwordList, nSkipgram):
+def get_features(instanceData, ngramRange=range(2,4), caseFolding=True, stopwordList=[], nSkipgram=3):
     features = get_bag_of_words(instanceData, stopwordList, caseFolding)
     ngrams = {}
     for k in ngramRange:

@@ -4,6 +4,8 @@ A class that ties together our classifying stuff.
 from declist import *
 from helpers import *
 from naivebayes import *
+from sklearn import svm
+import numpy
 
 class MegaClassifier:
     casefold = True
@@ -16,6 +18,16 @@ class MegaClassifier:
         self.testData = {}
         self.decisionList = []
         self.naiveBayesClassifier = ()
+        self.SVM = svm.SVC(cache_size=1000)
+        self.classes = []
+
+    def getClasses(self):
+        classes = set()
+        for k in self.trainData['tweets']:
+            instance = self.trainData['tweets'][k]
+            for a in instance['answers']:
+                classes.add(a)
+        return sorted(list(classes))
 
     def setTrainData(self, newData):
         if self.negate:
@@ -23,6 +35,7 @@ class MegaClassifier:
         else:
             self.trainData = newData
         self.mfs = MFS_counter(self.trainData)
+        self.getClasses()
 
     def setTestData(self, newData):
         if self.negate:
@@ -121,5 +134,56 @@ class MegaClassifier:
         print("Feature probabilities")
         positive = self.naiveBayesClassifier[1]['positive']
         print(list(positive.items())[:50])
+
+    def buildCountSVM(self):
+        featureMap = self.getFeatureMap()
+        instanceVectors = []
+        classifications = []
+        for key in self.trainData['tweets']:
+            instance = self.trainData['tweets'][key]
+            instanceVectors.append(self.buildFeatureCountVector(instance, featureMap))
+            answerIndex = -1
+            for i in range(len(self.classes)):
+                if instance['answers'][0] == self.classes[i]:
+                    answerIndex = i
+            classifications.append(answerIndex)
+        self.SVM.fit(numpy.array(instanceVectors), numpy.array(classifications))
+
+    """
+    getFeatureMap
+    Builds a dictionary that maps each feature to its index in
+    a feature vector. For use with SVM.
+    """
+    def getFeatureMap(self):
+        features = set()
+        for instance in self.trainData['tweets']:
+            instanceFeatures = set(get_features(self.trainData['tweets'][instance]))
+            features.update(instanceFeatures)
+        order = sorted(list(features))
+        featureMap = {}
+        for i in range(len(order)):
+            featureMap[order[i]] = i
+        return featureMap
+
+    def buildFeatureCountVector(self, instance, featureMap):
+        vector = []
+        for i in range(len(featureMap)):
+            vector.append(0)
+        features = get_features(instance)
+        for f in features:
+            if f in featureMap:
+                vector[featureMap[f]] += 1
+        return vector
+
+    def buildFeaturePresenceVector(self, instance, featureMap):
+        vector = []
+        for i in range(len(featureMap)):
+            vector.append(0)
+        features = get_features(instance)
+        for f in features:
+            if f in featureMap:
+                vector[featureMap[f]] = 1
+        return vector
+
 
         
