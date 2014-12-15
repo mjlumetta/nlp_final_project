@@ -137,6 +137,7 @@ class MegaClassifier:
 
     def buildCountSVM(self):
         featureMap = self.getFeatureMap()
+        print(len(featureMap))
         instanceVectors = []
         classifications = []
         for key in self.trainData['tweets']:
@@ -147,7 +148,7 @@ class MegaClassifier:
                 if instance['answers'][0] == self.classes[i]:
                     answerIndex = i
             classifications.append(answerIndex)
-        self.SVM.fit(numpy.array(instanceVectors), numpy.array(classifications))
+        # self.SVM.fit(numpy.array(instanceVectors), numpy.array(classifications))
 
     """
     getFeatureMap
