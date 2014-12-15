@@ -94,9 +94,9 @@ def test(trainData, testData, classifier):
 
     newStats = {}
     for instance in testData['tweets']:
-        result = classifier.classifyInstanceByDecisionListLessK(testData['tweets'][instance], 2)
+        result = classifier.classifyInstanceByCountSVM(testData['tweets'][instance])
         answers = testData['tweets'][instance]['answers']
-        # print ("Expected", result, "actual", answers[0])
+        print ("Expected", result, "actual", answers[0])
         """
         if result in answers:
             correct += 1

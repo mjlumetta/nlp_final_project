@@ -20,6 +20,7 @@ class MegaClassifier:
         self.naiveBayesClassifier = ()
         self.CountSVM = svm.LinearSVC()
         self.classes = []
+        self.cVectorizer = None
 
     def getClasses(self):
         classes = set()
@@ -76,6 +77,11 @@ class MegaClassifier:
             return decisionListResult
         else:
             return naiveBayesResult
+
+    def classifyInstanceByCountSVM(self, instance):
+        featureVector = self.cVectorizer.transform([' '.join(instance['words'])])
+        result = self.CountSVM.predict(featureVector)[0]
+        return self.classes[result]
 
     def classifyInstanceByDecisionList(self, instance):
         return classify(instance, self.decisionList, self.mfs)
@@ -153,8 +159,8 @@ class MegaClassifier:
 
     def buildCountSVM(self):
         documents = self.getDocuments()
-        cVectorizer = feature_extraction.text.CountVectorizer()
-        featureVectors = cVectorizer.fit_transform(documents)
+        self.cVectorizer = feature_extraction.text.CountVectorizer()
+        featureVectors = self.cVectorizer.fit_transform(documents)
         classifications = self.getClassifications()
         self.CountSVM.fit(featureVectors, classifications)
 
