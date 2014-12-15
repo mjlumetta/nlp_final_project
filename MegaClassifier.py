@@ -147,6 +147,7 @@ class MegaClassifier:
             for i in range(len(self.classes)):
                 if instance['answers'][0] == self.classes[i]:
                     answerIndex = i
+                    print("Answer index is", i)
             classifications.append(answerIndex)
         self.SVM.fit(numpy.array(instanceVectors), numpy.array(classifications))
 
