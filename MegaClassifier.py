@@ -35,7 +35,7 @@ class MegaClassifier:
         else:
             self.trainData = newData
         self.mfs = MFS_counter(self.trainData)
-        self.getClasses()
+        self.classes = self.getClasses()
 
     def setTestData(self, newData):
         if self.negate:
