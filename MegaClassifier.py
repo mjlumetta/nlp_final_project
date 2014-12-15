@@ -18,7 +18,7 @@ class MegaClassifier:
         self.testData = {}
         self.decisionList = []
         self.naiveBayesClassifier = ()
-        self.SVM = svm.SVC(cache_size=1000)
+        self.SVM = svm.LinearSVC()
         self.classes = []
 
     def getClasses(self):
