@@ -4,7 +4,7 @@ A class that ties together our classifying stuff.
 from declist import *
 from helpers import *
 from naivebayes import *
-from sklearn import svm, feature_extraction
+from sklearn import svm, feature_extraction, neighbors
 import numpy
 
 class MegaClassifier:
@@ -37,6 +37,8 @@ class MegaClassifier:
             self.trainData = newData
         self.mfs = MFS_counter(self.trainData)
         self.classes = self.getClasses()
+        self.cVectorizer = feature_extraction.text.CountVectorizer()
+        self.cVectorizer.fit(getDocuments())
 
     def setTestData(self, newData):
         if self.negate:
@@ -159,8 +161,7 @@ class MegaClassifier:
 
     def buildCountSVM(self):
         documents = self.getDocuments()
-        self.cVectorizer = feature_extraction.text.CountVectorizer()
-        featureVectors = self.cVectorizer.fit_transform(documents)
+        featureVectors = self.cVectorizer.transform(documents)
         classifications = self.getClassifications()
         self.CountSVM.fit(featureVectors, classifications)
 
