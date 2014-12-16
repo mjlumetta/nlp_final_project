@@ -21,6 +21,7 @@ class MegaClassifier:
         self.CountSVM = svm.LinearSVC()
         self.classes = []
         self.cVectorizer = None
+        self.KNN = neighbors.KNeighborsClassifier(weights='distance')
 
     def getClasses(self):
         classes = set()
@@ -38,7 +39,7 @@ class MegaClassifier:
         self.mfs = MFS_counter(self.trainData)
         self.classes = self.getClasses()
         self.cVectorizer = feature_extraction.text.CountVectorizer()
-        self.cVectorizer.fit(getDocuments())
+        self.cVectorizer.fit(self.getDocuments())
 
     def setTestData(self, newData):
         if self.negate:
@@ -83,6 +84,11 @@ class MegaClassifier:
     def classifyInstanceByCountSVM(self, instance):
         featureVector = self.cVectorizer.transform([' '.join(instance['words'])])
         result = self.CountSVM.predict(featureVector)[0]
+        return self.classes[result]
+
+    def classifyInstanceByKNN(self, instance):
+        featureVector = self.cVectorizer.transform([' '.join(instance['words'])])
+        result = self.KNN.predict(featureVector)[0]
         return self.classes[result]
 
     def classifyInstanceByDecisionList(self, instance):
@@ -164,6 +170,16 @@ class MegaClassifier:
         featureVectors = self.cVectorizer.transform(documents)
         classifications = self.getClassifications()
         self.CountSVM.fit(featureVectors, classifications)
+
+    def buildKNearestNeighbors(self, k=5, weighted=True):
+        if weighted:
+            weightParam = 'distance'
+        else:
+            weightParam = 'uniform'
+        self.KNN.set_params(weights=weightParam, n_neighbors=k)
+        featureVectors = self.cVectorizer.transform(self.getDocuments())
+        classifications = self.getClassifications()
+        self.KNN.fit(featureVectors, classifications)
 
 
     def getDocuments(self):

@@ -91,10 +91,11 @@ def test(trainData, testData, classifier):
     classifier.buildDecisionList()
     classifier.buildNaiveBayesClassifier()
     classifier.buildCountSVM()
+    classifier.buildKNearestNeighbors(weighted=False, k=15)
 
     newStats = {}
     for instance in testData['tweets']:
-        result = classifier.classifyInstanceByCountSVM(testData['tweets'][instance])
+        result = classifier.classifyInstanceByKNN(testData['tweets'][instance])
         answers = testData['tweets'][instance]['answers']
         print ("Expected", result, "actual", answers[0])
         """
