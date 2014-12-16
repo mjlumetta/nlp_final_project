@@ -13,6 +13,7 @@ Mike Lumetta, Chris Miller
 from parseTweet import parse_tweets
 from math import log
 from operator import itemgetter
+from helpers import negation_processing
 
 def build_decision_list_file(filename):
     tweetData = parse_tweets(filename, 'B')
@@ -115,14 +116,15 @@ def get_feature_scores(counts):
     return scores
 
 def classify(instance, decision_list, MFS):
-    features = get_features(instance, range(2,4), True, [], 3)  
+    # features = get_features(instance, range(2,4), True, [], 3)
+    features = get_bag_of_words(instance, caseFolding=True)  
     for entry in decision_list:
         if entry[1] in features:
             return entry[0]
     return MFS
 
 if __name__ == "__main__":
-    filename = '/data/cs65/semeval-2015/B/train/twitter-train-full-B.tsv'
+    filename = 'twitter-train-full-B.tsv'
     tweetData = parse_tweets(filename, 'B')
     stopwords = get_stopwords(tweetData['tweets'], 0.2)
     stopwords2 = get_stopwords(tweetData['tweets'], 0.1)

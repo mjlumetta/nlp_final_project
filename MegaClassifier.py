@@ -22,6 +22,16 @@ class MegaClassifier:
         self.classes = []
         self.cVectorizer = None
         self.KNN = neighbors.KNeighborsClassifier(weights='distance')
+        # self.algorithmScores = dict(naiveBayes=34.68, svm=54.34, knn=29.58, decisionList=46.02)
+        self.algorithmScores = dict(naiveBayes=34.68, svm=54.34, decisionList=46.02)
+        self.weights = self.getWeights()
+
+    def getWeights(self):
+        total = sum(self.algorithmScores.values())
+        weights = {}
+        for k, v in self.algorithmScores.items():
+            weights[k] = v / total
+        return weights
 
     def getClasses(self):
         classes = set()
@@ -69,17 +79,43 @@ class MegaClassifier:
     def setNegate(new):
         self.negate = new
 
-    def classifyInstance(self, instance):
+    def classifyInstanceMega(self, instance):
         naiveBayesResult = self.classifyInstanceByNaiveBayes(instance)
         decisionListResult = self.classifyInstanceByDecisionList(instance)
+        #knnResult = self.classifyInstanceByKNN(instance)
+        svmResult = self.classifyInstanceByCountSVM(instance)
         neutralList = ['neutral', 'objective', 'objective-or-neutral']
-        if naiveBayesResult == decisionListResult:
-            return naiveBayesResult
-        elif decisionListResult not in neutralList:
-            # decision list wins tiebreak if one is pos and other is neg
-            return decisionListResult
+        results = {}
+        for c in self.classes:
+            results[c] = 0.0
+        results[naiveBayesResult] += self.weights['naiveBayes']
+        # results[knnResult] += self.weights['knn']
+        results[svmResult] += self.weights['svm']
+        results[decisionListResult] += self.weights['decisionList']
+        maxScore = 0.0
+        maxClass = []
+        for k, v in results.items():
+            if v >= maxScore:
+                maxScore = v
+                maxClass.append(k)
+        if len(maxClass) == 1:
+            return maxClass[0]
+        elif svmResult in maxClass:
+            return svmResult
         else:
-            return naiveBayesResult
+            return decisionListResult
+
+    def classifyInstance(self, instance):
+        svmResult = self.classifyInstanceByCountSVM(instance)
+        decisionListResult = self.classifyInstanceByCountSVM(instance)
+        neutralList = ['neutral', 'objective', 'objective-or-neutral']
+        if svmResult == decisionListResult:
+            return svmResult
+        elif svmResult not in neutralList:
+            # decision list wins tiebreak if one is pos and other is neg
+            return svmResult
+        else:
+            return decisionListResult
 
     def classifyInstanceByCountSVM(self, instance):
         featureVector = self.cVectorizer.transform([' '.join(instance['words'])])

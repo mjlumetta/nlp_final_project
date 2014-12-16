@@ -41,7 +41,7 @@ def main():
         chunks = k_chunks(trainData, k)
         crossvalTest(chunks, mega)
     else:
-        testVsTrain(trainData, sys.argv[2], mega)
+        testVsTrain(trainData, sys.argv[2], mega, True)
 
 def debugNBC(chunks, classifier):
     testData = chunks[0]
@@ -75,12 +75,12 @@ def combine_chunks(chunks):
         combined['tweets'].update(chunks[i]['tweets'])
     return combined
 
-def testVsTrain(trainData, filename, classifier):
+def testVsTrain(trainData, filename, classifier, showScore=False):
     testData = parse_tweets(filename, 'B')
     stats = test(trainData, testData, classifier)
-    newScore = scorer(stats)
-
-    print("The new version got an official score of", newScore)
+    if showScore:
+        newScore = scorer(stats)
+        print("The new version got an official score of", newScore)
 
 
 def test(trainData, testData, classifier):
@@ -91,13 +91,13 @@ def test(trainData, testData, classifier):
     classifier.buildDecisionList()
     classifier.buildNaiveBayesClassifier()
     classifier.buildCountSVM()
-    classifier.buildKNearestNeighbors(weighted=False, k=15)
+    classifier.buildKNearestNeighbors()
 
     newStats = {}
     for instance in testData['tweets']:
-        result = classifier.classifyInstanceByKNN(testData['tweets'][instance])
+        result = classifier.classifyInstanceMega(testData['tweets'][instance])
         answers = testData['tweets'][instance]['answers']
-        print ("Expected", result, "actual", answers[0])
+        print(instance, '\t', result)
         """
         if result in answers:
             correct += 1

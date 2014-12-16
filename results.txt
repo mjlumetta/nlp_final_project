@@ -93,3 +93,69 @@ Average score: 54.340242952830884
 Algorithm 8
 An SVM approach using LinearSVC from scikit-learn. 
 For feature vectors, uses occurrence vectors for bag of words.
+NOT IMPLEMENTED
+
+Algorithm 9
+A k nearest neighbors approach using KNeighborsClassifier from scikit-learn.
+For feature vectors, use count vectors for bag of words.
+Uses weights for neighbors calculated by inverse of distance.
+k = 5
+Chunk 0 : 30.94296721325315
+Chunk 1 : 29.765775138353057
+Chunk 2 : 33.017053835027916
+Chunk 3 : 29.22300222840583
+Chunk 4 : 24.961180124223603
+Average score: 29.581995707852705
+Tends to guess objective a lot.
+
+Algorithm 10
+A k nearest neighbors approach using KNeighborsClassifier from scikit-learn.
+For feature vectors, use count vectors for bag of words.
+Uses uniform weights for neighbors.
+k = 5
+Chunk 0 : 26.9848439225133
+Chunk 1 : 25.109345987208584
+Chunk 2 : 32.81912925137584
+Chunk 3 : 28.238505925420363
+Chunk 4 : 24.48096885813149
+Average score: 27.52655878892991
+k = 15
+Chunk 0 : 24.278248168519067
+Chunk 1 : 25.407168010379017
+Chunk 2 : 25.0166862196818
+Chunk 3 : 23.830192332515814
+Chunk 4 : 20.602517361780187
+Average score: 23.826962418575178
+Tends to guess objective a lot.
+
+Algorithm 11
+A combination of the count SVM (7) and bag-of-words decision list (1).
+If they disagree, picks the non-neutral one.
+If both are non-neutral, picks the SVM result.
+Chunk 0 : 57.139846970355435
+Chunk 1 : 51.80890948676947
+Chunk 2 : 54.43067570727145
+Chunk 3 : 53.965399109284
+Chunk 4 : 54.27702625895192
+Average score: 54.32437150652645
+
+Algorithm 12
+A weighted voting scheme between count SVM (7), bag-of-words decision list (1),
+naive Bayes (2), and k nearest neighbors (9).
+Calculates weights by looking at cross-validation scores of the individual
+algorithms and then normalizing so that they sum to 1.
+Chunk 0 : 56.92158814421589
+Chunk 1 : 52.285145487833056
+Chunk 2 : 54.765695965802834
+Chunk 3 : 53.53357676335125
+Chunk 4 : 53.675815680155054
+Average score: 54.23636440827162
+
+Algorithm 13
+Same as algorithm 12 except KNN is omitted.
+Chunk 0 : 56.99278267842823
+Chunk 1 : 53.45457755804715
+Chunk 2 : 54.97999729018548
+Chunk 3 : 53.832156354167715
+Chunk 4 : 54.121956817258976
+Average score: 54.676294139617504
