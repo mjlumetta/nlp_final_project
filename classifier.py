@@ -41,7 +41,7 @@ def main():
         chunks = k_chunks(trainData, k)
         crossvalTest(chunks, mega)
     else:
-        testVsTrain(trainData, sys.argv[2], mega, True)
+        testVsTrain(trainData, sys.argv[2], mega)
 
 def debugNBC(chunks, classifier):
     testData = chunks[0]
