@@ -95,7 +95,7 @@ def test(trainData, testData, classifier):
 
     newStats = {}
     for instance in testData['tweets']:
-        result = classifier.classifyInstanceMega(testData['tweets'][instance])
+        result = classifier.classifyInstanceByCountSVM(testData['tweets'][instance])
         answers = testData['tweets'][instance]['answers']
         print(instance, '\t', result)
         """
